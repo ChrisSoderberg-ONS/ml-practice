@@ -1,0 +1,6 @@
+tensorflow
+pandas
+pyarrow
+ucimlrepo
+ipython
+jupyterlab
