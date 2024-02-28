@@ -1,5 +1,6 @@
 import tensorflow as tf
 import pandas as pd
+from matplotlib import pyplot as plt
 
 def build_lr_model(learning_rate):
     """
@@ -23,13 +24,13 @@ def build_lr_model(learning_rate):
 
     return model
 
-def train_model(model, features, label, epochs, batch_size):
+def train_model(model, df, features, label, epochs, batch_size):
     """
     Train model by feeding data
     """
     history = model.fit(
-        x = features,
-        y = label,
+        x = df[features],
+        y = df[label],
         epochs = epochs,
         batch_size = batch_size
     )
@@ -44,3 +45,40 @@ def train_model(model, features, label, epochs, batch_size):
     rmse = hist["root_mean_squared_error"]
 
     return trained_weight, trained_bias, epochs, rmse
+
+def plot_the_model(trained_weight, trained_bias, feature, label):
+    """
+    Plot the trained model against the training feature and label
+    """
+
+    # Label the axes
+    plt.xlabel("feature")
+    plt.ylabel("label")
+
+    # Plot the feature values vs. label values
+    plt.scatter(feature, label)
+
+    # Create a red line representing the model. The red line starts
+    # at coordinates (x0, y0) and ends at coordinates (x1, y1)
+    x0 = 0
+    y0 = trained_bias[0]
+    x1 = feature[-1]
+    y1 = trained_bias[0] + (trained_weight[0][0] * x1)
+    plt.plot([x0, x1], [y0, y1], c='r')
+
+    # Render the scatter plot and the red line.
+    plt.show()
+
+def plot_the_loss_curve(epochs, rmse):
+    """
+    Plot the loss curve, which shows loss vs. epoch
+    """
+
+    plt.figure()
+    plt.xlabel("Epoch")
+    plt.ylabel("Root Mean Squared Error")
+
+    plt.plot(epochs, rmse, label="Loss")
+    plt.legend()
+    plt.ylim([rmse.min()*0.97, rmse.max()])
+    plt.show()
