@@ -17,19 +17,19 @@ def build_lr_model(learning_rate):
     
     # Compile model topography and configure training to minimize mean squared error
     model.compile(
-        optimizer = tf.keras.optimizers.experimental.RSprop(learning_rate = learning_rate),
+        optimizer = tf.keras.optimizers.experimental.RMSprop(learning_rate = learning_rate),
         loss = "mean_squared_error",
         metrics = [tf.keras.metrics.RootMeanSquaredError()]
     )
 
     return model
 
-def train_model(model, df, features, label, epochs, batch_size):
+def train_model(model, df, feature, label, epochs, batch_size):
     """
     Train model by feeding data
     """
     history = model.fit(
-        x = df[features],
+        x = df[feature],
         y = df[label],
         epochs = epochs,
         batch_size = batch_size
@@ -46,7 +46,7 @@ def train_model(model, df, features, label, epochs, batch_size):
 
     return trained_weight, trained_bias, epochs, rmse
 
-def plot_the_model(trained_weight, trained_bias, feature, label):
+def plot_the_model(df, trained_weight, trained_bias, feature, label):
     """
     Plot the trained model against the training feature and label
     """
@@ -54,15 +54,16 @@ def plot_the_model(trained_weight, trained_bias, feature, label):
     # Label the axes
     plt.xlabel("feature")
     plt.ylabel("label")
-
-    # Plot the feature values vs. label values
-    plt.scatter(feature, label)
+    
+    # Create a scatter plot from 200 random points of the dataset.
+    random_examples = df.sample(n=200)
+    plt.scatter(random_examples[feature], random_examples[label])
 
     # Create a red line representing the model. The red line starts
     # at coordinates (x0, y0) and ends at coordinates (x1, y1)
     x0 = 0
     y0 = trained_bias[0]
-    x1 = feature[-1]
+    x1 = random_examples[feature].max()
     y1 = trained_bias[0] + (trained_weight[0][0] * x1)
     plt.plot([x0, x1], [y0, y1], c='r')
 
