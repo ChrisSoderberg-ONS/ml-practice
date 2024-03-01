@@ -1,6 +1,7 @@
 import tensorflow as tf
 import pandas as pd
 from matplotlib import pyplot as plt
+import numpy
 
 def build_lr_model(learning_rate):
     """
@@ -24,6 +25,7 @@ def build_lr_model(learning_rate):
 
     return model
 
+
 def train_model(model, df, feature, label, epochs, batch_size):
     """
     Train model by feeding data
@@ -45,6 +47,32 @@ def train_model(model, df, feature, label, epochs, batch_size):
     rmse = hist["root_mean_squared_error"]
 
     return trained_weight, trained_bias, epochs, rmse
+
+
+def predict_from_random(model, df, feature, n):
+    """
+    Predict label from random feature data
+    """
+
+    batch = numpy.random.uniform(
+        df[feature].quantile(.1), 
+        df[feature].quantile(.9), 
+        size=n)
+    
+    predicted_values = model.predict_on_batch(x = batch)
+    
+    output_df = pd.DataFrame()
+
+    for i in range(n):
+        row = {
+            "Generated feature data": batch[i],
+            "Predicted label": predicted_values[i][0]
+        }
+
+        output_df = pd.concat([output_df, pd.DataFrame([row])], ignore_index=True)
+
+    return output_df
+
 
 def plot_the_model(df, trained_weight, trained_bias, feature, label):
     """
@@ -69,6 +97,7 @@ def plot_the_model(df, trained_weight, trained_bias, feature, label):
 
     # Render the scatter plot and the red line.
     plt.show()
+
 
 def plot_the_loss_curve(epochs, rmse):
     """
