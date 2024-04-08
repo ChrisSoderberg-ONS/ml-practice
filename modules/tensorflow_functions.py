@@ -38,7 +38,7 @@ def train_model(model, df, feature, label, epochs, batch_size):
     )
 
     # Gather the model's trained weight and bias
-    trained_weight = model.get_weights()[0]
+    trained_weight = model.get_weights()[0][0]
     trained_bias = model.get_weights()[1]
 
     # The list of epochs is stored separately from the rest of history
@@ -64,7 +64,7 @@ def train_model_with_validation(model, df, feature, label, epochs, batch_size, v
     )
 
     # Gather the model's trained weight and bias
-    trained_weight = model.get_weights()[0]
+    trained_weight = model.get_weights()[0][0]
     trained_bias = model.get_weights()[1]
 
     # The list of epochs is stored separately from the rest of history
@@ -118,9 +118,9 @@ def plot_the_model(df, trained_weight, trained_bias, feature, label):
     # Create a red line representing the model. The red line starts
     # at coordinates (x0, y0) and ends at coordinates (x1, y1)
     x0 = 0
-    y0 = trained_bias[0]
+    y0 = trained_bias
     x1 = random_examples[feature].max()
-    y1 = trained_bias[0] + (trained_weight[0][0] * x1)
+    y1 = trained_bias + (trained_weight * x1)
     plt.plot([x0, x1], [y0, y1], c='r')
 
     # Render the scatter plot and the red line.
